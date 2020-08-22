@@ -17,7 +17,7 @@ class V1::PostsController < ApplicationController
 		if post.save
 			render json: post, message: "Post Created"
 		else
-			render json: {error: post.errors.messages}, status: 422
+			render json: {error: post.errors.messages}, status: :created
 		end
 	end
 

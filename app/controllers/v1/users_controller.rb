@@ -1,52 +1,19 @@
 class V1::UsersController < ApplicationController
-	def index
-		users = User.all
-		
-		render json: users, status: :ok		
-	end
-
-	def show
-		user = User.find(params[:id])
-
-		render json: user, status: :ok
-	end
-
 	def create
-		user = User.new(user_param)
-
+		user = User.new(user_params)
 		if user.save
-			render json: user, message: "User Created"
+			render json: user.to_json(only: [:email,:password, :name,:username])
 		else
-			render json: {error: user.errors.messages}, status: 422
-		end
-	end
-
-	def update
-		user = User.find(params[:id])
-
-		if user.update(user_param)
-			render json: user, message: "User Updated",status: :ok
-		else
-			render json: {error: user.errors.messages}, status: 422
-		end
-	end
-
-	def destroy
-		user = User.find(params[:id])
-
-		if user.destroy
-			render json: user, message: "User Deleted",status: :ok
-		else
-			render json: {error: user.errors.messages}, status: 422
+			render json: :unprocessable_entity
 		end
 	end
 
 	private
-	def user_param
-		params.require(:user).permit(:first_name, 
-									 :last_name,
-									 :email,
-									 :age,
-									 :country)
+	def user_params
+		params.require(:user).permit(:email, 
+									 :password,
+									 :password_confirmation,
+									 :name,
+									 :username)
 	end
 end

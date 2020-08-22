@@ -38,6 +38,9 @@ group :development do
   gem 'bcrypt'
   gem 'faker'
   gem 'rack-cors'
+  gem 'active_model_serializers'
+  gem 'devise'
+  gem 'simple_token_authentication'
 end
 
 # Windows does not include zoneinfo files, so bundle the tzinfo-data gem
