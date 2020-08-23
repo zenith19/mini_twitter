@@ -41,6 +41,7 @@ group :development do
   gem 'active_model_serializers'
   gem 'devise'
   gem 'simple_token_authentication'
+  gem 'jwt'
 end
 
 # Windows does not include zoneinfo files, so bundle the tzinfo-data gem

@@ -1,4 +1,6 @@
 class V1::PostsController < ApplicationController
+	before_action :authenticate
+
 	def index
 		posts = Post.all
 		
@@ -46,5 +48,13 @@ class V1::PostsController < ApplicationController
 		params.require(:post).permit(:title, 
 									 :content,
 									 :user_id)
+	end
+
+	def authenticate
+		token = request.headers["token"].delete_suffix('nil')
+		user = User.where(authentication_token: token)
+		if user.empty? || user.ids.first != params[:user_id]
+			render json: "unauthorized", status: :unauthorized
+		end
 	end
 end

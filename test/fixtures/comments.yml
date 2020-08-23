@@ -2,10 +2,10 @@
 
 one:
   content: MyString
-  user: one
   post: one
+  user: one
 
 two:
   content: MyString
-  user: two
   post: two
+  user: two
