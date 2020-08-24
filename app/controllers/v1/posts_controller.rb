@@ -1,5 +1,5 @@
 class V1::PostsController < ApplicationController
-	before_action :authenticate
+	before_action :authenticate, except: :index
 
 	def index
 		posts = Post.all
@@ -19,7 +19,7 @@ class V1::PostsController < ApplicationController
 		if post.save
 			render json: post, message: "Post Created"
 		else
-			render json: {error: post.errors.messages}, status: :created
+			render json: {error: post.errors.messages}, status: 422
 		end
 	end
 

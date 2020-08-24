@@ -29,3 +29,7 @@ post_id_arr = Post.all.ids
 				   post_id: pid,
 				   user_id: uid)
 end
+
+5.times do |i|
+	UserFollowings.create(user_id: "#{i-1}",following_user_id: "#{5-i}")	
+end
