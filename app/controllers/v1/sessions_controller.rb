@@ -4,7 +4,7 @@ class V1::SessionsController < ApplicationController
 	def create
 		user = User.where(email: params[:email]).first
 
-		if user && user.valid_password?(params[:password])
+		if user.present? && user.valid_password?(params[:password])
 			render json: user
 		else
 			render json: {message: "Invalid Email or Password"}
