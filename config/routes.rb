@@ -3,13 +3,15 @@ Rails.application.routes.draw do
     get 'user_followings/index'
   end
   get 'user_followings/index'
-  # devise_for :users
-  # For details on the DSL available within this file, see https://guides.rubyonrails.org/routing.html
-  namespace :v1, defaults: {format: :json} do
-  	resources :posts
-  	resources :sessions, only: [:create, :destroy]
-  	resources :users, only: [:create]
-  	resources :comments
-  	resources :user_followings, only: [:show, :create, :destroy]
+  namespace :v1, defaults: { format: :json } do
+    resources :posts do
+      resources :comments, only: %i[index]
+    end
+    resources :sessions, only: %i[create destroy]
+    resources :users do
+      resources :posts, only: %i[index], controller: 'user_posts'
+    end
+    resources :comments, only: %i[create]
+    resources :user_followings, only: %i[show create destroy]
   end
 end

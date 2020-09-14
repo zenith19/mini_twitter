@@ -1,7 +1,3 @@
 require 'test_helper'
 
-class V1::PostsControllerTest < ActionDispatch::IntegrationTest
-  # test "the truth" do
-  #   assert true
-  # end
-end
+class V1::PostsControllerTest < ActionDispatch::IntegrationTest; end # end #   assert true # test "the truth" do

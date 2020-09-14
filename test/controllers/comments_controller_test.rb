@@ -1,7 +1,3 @@
 require 'test_helper'
 
-class CommentsControllerTest < ActionDispatch::IntegrationTest
-  # test "the truth" do
-  #   assert true
-  # end
-end
+class CommentsControllerTest < ActionDispatch::IntegrationTest; end # end #   assert true # test "the truth" do
