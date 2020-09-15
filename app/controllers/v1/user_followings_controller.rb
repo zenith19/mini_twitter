@@ -7,7 +7,7 @@ class V1::UserFollowingsController < ApplicationController
     user_followings.each { |u_f| user_ids << u_f.following_user_id }
     users = []
     user_ids.each { |u_i| users <<  User.find(u_i) }
-    render json: users.to_json(only: %i[id email name username]), status: :ok
+    render json: users, status: :ok
   end
 
   def create

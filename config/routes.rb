@@ -1,8 +1,4 @@
 Rails.application.routes.draw do
-  namespace :v1 do
-    get 'user_followings/index'
-  end
-  get 'user_followings/index'
   namespace :v1, defaults: { format: :json } do
     resources :posts do
       resources :comments, only: %i[index]
@@ -13,5 +9,6 @@ Rails.application.routes.draw do
     end
     resources :comments, only: %i[create]
     resources :user_followings, only: %i[show create destroy]
+    resources :user_followers, only: %i[show]
   end
 end

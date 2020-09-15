@@ -39,6 +39,7 @@ ActiveRecord::Schema.define(version: 2020_08_23_224716) do
     t.integer "following_user_id"
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
+    t.index ["following_user_id"], name: "index_user_followings_on_following_user_id"
     t.index ["user_id"], name: "index_user_followings_on_user_id"
   end
 
