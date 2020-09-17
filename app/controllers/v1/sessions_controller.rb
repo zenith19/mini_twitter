@@ -29,7 +29,7 @@ class V1::SessionsController < ApplicationController
   def authenticate
     token = request.headers['token'].delete_suffix('nil')
     user = User.where(authentication_token: token)
-    if user.empty? || user.ids.first != params[:id].to_i
+    if user.empty?
       render json: 'unauthorized', status: :unauthorized
     end
   end

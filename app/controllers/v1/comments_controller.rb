@@ -1,5 +1,5 @@
 class V1::CommentsController < ApplicationController 
-  # before_action :authenticate
+  before_action :authenticate, except: :index
   def index
     comments = Comment.where(post_id: params[:post_id])
 

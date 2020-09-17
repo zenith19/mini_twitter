@@ -1,22 +1,22 @@
 class V1::PostsController < ApplicationController 
-  # before_action :authenticate, except: :index
+  before_action :authenticate, except: [:index, :show]
   def index
     posts = Post.all
 
-    render json: posts, status: :ok
+    render json: posts, status: 200
   end
 
   def show
     post = Post.find(params[:id])
 
-    render json: post, status: :ok
+    render json: post, status: 200
   end
 
   def create
     post = Post.new(post_param)
 
     if post.save
-      render json: post, message: 'Post Created'
+      render json: post, message: 'Post Created', status: 201
     else
       render json: { error: post.errors.messages }, status: 422
     end
