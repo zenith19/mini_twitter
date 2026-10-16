@@ -1,0 +1,28 @@
+# PostgreSQL configuration.
+#
+# Credentials come from the environment so that nothing secret lives in the repo.
+# Copy .env.example to .env and adjust for your local Postgres, or set DATABASE_URL
+# (which Rails prefers over the discrete keys below when it is present).
+
+default: &default
+  adapter: postgresql
+  encoding: unicode
+  host: <%= ENV.fetch("DATABASE_HOST", "localhost") %>
+  port: <%= ENV.fetch("DATABASE_PORT", 5432) %>
+  username: <%= ENV.fetch("DATABASE_USERNAME", ENV["USER"]) %>
+  password: <%= ENV.fetch("DATABASE_PASSWORD", nil) %>
+  pool: <%= ENV.fetch("RAILS_MAX_THREADS", 5) %>
+
+development:
+  <<: *default
+  database: <%= ENV.fetch("DATABASE_NAME", "mini_twitter_development") %>
+
+# Warning: the database defined as "test" will be erased and re-generated
+# whenever you run the test suite. Never point it at your development database.
+test:
+  <<: *default
+  database: <%= ENV.fetch("TEST_DATABASE_NAME", "mini_twitter_test") %>
+
+production:
+  <<: *default
+  url: <%= ENV["DATABASE_URL"] %>

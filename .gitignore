@@ -1,0 +1,31 @@
+# ---- Dependencies ----
+node_modules/
+/api/.bundle
+/api/vendor/bundle
+
+# ---- Build output ----
+/web/dist/
+/web/build/
+
+# ---- Environment & secrets ----
+.env
+.env.*
+!.env.example
+/api/config/master.key
+
+# ---- Rails runtime ----
+/api/log/*
+/api/tmp/*
+!/api/log/.keep
+!/api/tmp/.keep
+/api/tmp/pids/*
+!/api/tmp/pids/.keep
+/api/storage/*
+!/api/storage/.keep
+/api/.byebug_history
+
+# ---- Editor / OS ----
+.DS_Store
+*.swp
+.idea/
+.vscode/
