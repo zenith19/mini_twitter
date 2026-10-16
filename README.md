@@ -31,6 +31,15 @@ cd web && cp .env.example .env && npm install && npm run dev
 ```
 </details>
 
+## Screenshots
+
+| | |
+|---|---|
+| ![The feed, signed in](docs/screenshots/feed.png) | ![A post and its replies](docs/screenshots/post.png) |
+| The feed, with the composer | A post and its replies |
+| ![People, with follow state](docs/screenshots/people.png) | ![A user profile](docs/screenshots/profile.png) |
+| People, showing follow state | A user profile |
+
 ## Architecture
 
 ```
