@@ -16,8 +16,11 @@ Rails.application.routes.draw do
 
     resources :comments, only: %i[create update destroy]
 
-    # :id here is the id of the user being unfollowed.
-    resources :user_followings, only: %i[create destroy]
+    # Creating and removing a follow. Named `follows` rather than
+    # `user_followings` so these helpers do not collide with the nested
+    # /users/:user_id/followings route above, which silently left the POST
+    # route unnamed. :id is the id of the user being unfollowed.
+    resources :follows, only: %i[create destroy], controller: 'user_followings'
   end
 
   get 'up', to: 'rails/health#show', as: :rails_health_check

@@ -1,11 +1,9 @@
-# Read about fixtures at https://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+bob_on_alice:
+  content: Good point, Alice.
+  post: alice_post
+  user: bob
 
-one:
-  content: MyString
-  post: one
-  user: one
-
-two:
-  content: MyString
-  post: two
-  user: two
+carol_on_alice:
+  content: I disagree.
+  post: alice_post
+  user: carol

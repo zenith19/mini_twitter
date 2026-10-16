@@ -18,7 +18,7 @@ class ApplicationController < ActionController::API
 
   def unprocessable(record)
     render json: { errors: record.errors.as_json(full_messages: true) },
-           status: :unprocessable_entity
+           status: 422
   end
 
   # Shared pagination for the index endpoints, which previously returned

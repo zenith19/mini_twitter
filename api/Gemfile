@@ -28,6 +28,9 @@ gem 'tzinfo-data', platforms: %i[windows jruby]
 
 group :development, :test do
   gem 'debug', platforms: %i[mri windows]
+  # Rails 7.1's test runner is not compatible with minitest 6, which changed
+  # the signature of Minitest::Runnable.run.
+  gem 'minitest', '~> 5.25'
   gem 'dotenv-rails'
   gem 'faker'
 end

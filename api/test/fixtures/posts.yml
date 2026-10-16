@@ -1,11 +1,17 @@
-# Read about fixtures at https://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+alice_post:
+  title: Alice's first post
+  content: Something Alice wanted to say.
+  user: alice
+  created_at: <%= 2.days.ago.to_fs(:db) %>
 
-one:
-  title: MyString
-  content: MyString
-  user: one
+alice_second_post:
+  title: Alice writes again
+  content: A follow-up from Alice.
+  user: alice
+  created_at: <%= 1.hour.ago.to_fs(:db) %>
 
-two:
-  title: MyString
-  content: MyString
-  user: two
+bob_post:
+  title: Bob's only post
+  content: Bob has thoughts too.
+  user: bob
+  created_at: <%= 1.day.ago.to_fs(:db) %>

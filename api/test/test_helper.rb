@@ -2,11 +2,22 @@ ENV['RAILS_ENV'] ||= 'test'
 require_relative '../config/environment'
 require 'rails/test_help'
 
-class ActiveSupport::TestCase # Run tests in parallel with specified workers
-  parallelize(workers: :number_of_processors)
+module ActiveSupport
+  class TestCase
+    parallelize(workers: :number_of_processors)
+    fixtures :all
+  end
+end
 
-  # Setup all fixtures in test/fixtures/*.yml for all tests in alphabetical order.
-  fixtures :all
+class ActionDispatch::IntegrationTest
+  # Issues a real token for the user and returns the header hash to pass as
+  # `headers:`. Mirrors exactly what the client does.
+  def auth_headers_for(user)
+    token = user.issue_authentication_token!
+    { 'Authorization' => "Bearer #{token}" }
+  end
 
-  # Add more helper methods to be used by all tests here...
+  def json_body
+    JSON.parse(response.body)
+  end
 end

@@ -1,49 +1,37 @@
 {
-  "name": "mini_twitter_react",
-  "version": "0.1.0",
+  "name": "mini-twitter-web",
+  "version": "1.0.0",
   "private": true,
-  "dependencies": {
-    "@babel/runtime": "^7.11.2",
-    "@hookform/resolvers": "^0.1.1",
-    "@material-ui/core": "^4.11.0",
-    "@material-ui/data-grid": "^4.0.0-alpha.2",
-    "@material-ui/styles": "^4.10.0",
-    "@testing-library/jest-dom": "^4.2.4",
-    "@testing-library/react": "^9.3.2",
-    "@testing-library/user-event": "^7.1.2",
-    "axios": "^0.20.0",
-    "bootstrap": "^4.5.2",
-    "i": "^0.3.6",
-    "material-ui": "^1.0.0-beta.47",
-    "npm": "^6.14.8",
-    "or": "^0.2.0",
-    "react": "^16.13.1",
-    "react-dom": "^16.13.1",
-    "react-hook-form": "^6.8.1",
-    "react-router-dom": "^5.2.0",
-    "react-scripts": "3.4.3",
-    "reactstrap": "^8.5.1",
-    "typeface-roboto": "^0.0.75"
-  },
+  "type": "module",
   "scripts": {
-    "start": "react-scripts start",
-    "build": "react-scripts build",
-    "test": "react-scripts test",
-    "eject": "react-scripts eject"
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "lint": "eslint src"
   },
-  "eslintConfig": {
-    "extends": "react-app"
+  "dependencies": {
+    "@emotion/react": "11.13.3",
+    "@emotion/styled": "11.13.0",
+    "@mui/icons-material": "5.16.7",
+    "@mui/material": "5.16.7",
+    "axios": "^1.20.0",
+    "react": "18.3.1",
+    "react-dom": "18.3.1",
+    "react-hook-form": "7.53.0",
+    "react-router-dom": "^6.30.6"
   },
-  "browserslist": {
-    "production": [
-      ">0.2%",
-      "not dead",
-      "not op_mini all"
-    ],
-    "development": [
-      "last 1 chrome version",
-      "last 1 firefox version",
-      "last 1 safari version"
-    ]
+  "devDependencies": {
+    "@testing-library/jest-dom": "6.5.0",
+    "@testing-library/react": "16.0.1",
+    "@testing-library/user-event": "14.5.2",
+    "@vitejs/plugin-react": "4.3.1",
+    "eslint": "8.57.1",
+    "eslint-plugin-react": "7.37.1",
+    "eslint-plugin-react-hooks": "4.6.2",
+    "jsdom": "25.0.1",
+    "vite": "5.4.8",
+    "vitest": "2.1.2"
   }
 }
