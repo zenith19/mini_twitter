@@ -1,9 +1,10 @@
 import { Link as RouterLink, useNavigate } from "react-router-dom";
-import { AppBar, Box, Button, Stack, Toolbar, Typography } from "@mui/material";
+import { AppBar, Box, Button, IconButton, Stack, Toolbar, Typography } from "@mui/material";
+import MenuIcon from "@mui/icons-material/Menu";
 import Avatar from "./Avatar";
 import { useAuth } from "../auth/AuthContext";
 
-export default function Header() {
+export default function Header({ onMenuClick }) {
   const { user, isSignedIn, logout } = useAuth();
   const navigate = useNavigate();
 
@@ -15,6 +16,15 @@ export default function Header() {
   return (
     <AppBar position="sticky" color="default" elevation={0} sx={{ borderBottom: 1, borderColor: "divider" }}>
       <Toolbar>
+        <IconButton
+          onClick={onMenuClick}
+          edge="start"
+          aria-label="Open navigation"
+          sx={{ mr: 1, display: { xs: "inline-flex", md: "none" } }}
+        >
+          <MenuIcon />
+        </IconButton>
+
         <Typography
           component={RouterLink}
           to="/"
@@ -38,11 +48,11 @@ export default function Header() {
               sx={{ textDecoration: "none", color: "text.primary" }}
             >
               <Avatar user={user} size={32} />
-              <Box sx={{ display: { xs: "none", sm: "block" } }}>
-                <Typography variant="body2" fontWeight={700} lineHeight={1.1}>
+              <Box sx={{ minWidth: 0, maxWidth: { xs: 110, sm: "none" } }}>
+                <Typography variant="body2" fontWeight={700} lineHeight={1.1} noWrap>
                   {user.name}
                 </Typography>
-                <Typography variant="caption" color="text.secondary">
+                <Typography variant="caption" color="text.secondary" noWrap display="block">
                   @{user.username}
                 </Typography>
               </Box>

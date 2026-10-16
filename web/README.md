@@ -19,7 +19,7 @@ architecture and the API it consumes.
 npm install
 npm run dev          # http://localhost:5173
 npm run build        # production bundle
-npm test             # 22 tests (Vitest)
+npm test             # 24 tests (Vitest)
 npm run lint
 ```
 

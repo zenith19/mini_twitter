@@ -112,13 +112,13 @@ Collections accept `?page=` and `?per_page=` (default 25, max 100).
 ```bash
 make test                                   # both suites
 docker compose run --rm -e RAILS_ENV=test api bin/rails test   # 69 runs
-cd web && npm test                                              # 22 tests
+cd web && npm test                                              # 24 tests
 ```
 
 The backend suite covers the auth concern (missing / malformed / unknown / revoked tokens),
 cross-user ownership, the follow cycle including duplicate and self-follows, and email privacy.
-The frontend suite covers the login flow, the auth-dependent chrome, the follow button, and the
-fetch hook.
+The frontend suite covers the login flow, the auth-dependent chrome, small-screen navigation, the
+follow button and the fetch hook.
 
 ## Security notes
 

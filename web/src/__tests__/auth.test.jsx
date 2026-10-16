@@ -1,4 +1,5 @@
 import { beforeEach, describe, expect, test, vi } from "vitest";
+import userEvent from "@testing-library/user-event";
 import { renderWithProviders, screen, signIn, SIGNED_IN_USER } from "../test-utils";
 import Sidebar from "../components/Sidebar";
 import Header from "../components/Header";
@@ -50,5 +51,25 @@ describe("auth-dependent chrome", () => {
 
     renderWithProviders(<Header />);
     expect(screen.getByText("Log in")).toBeInTheDocument();
+  });
+});
+
+describe("small-screen navigation", () => {
+  beforeEach(() => window.localStorage.clear());
+
+  test("the header exposes a menu button to reach the nav", () => {
+    // The sidebar is hidden below the md breakpoint. Without this button
+    // there was no way to reach People, Following or Followers on a phone.
+    renderWithProviders(<Header onMenuClick={() => {}} />);
+
+    expect(screen.getByLabelText("Open navigation")).toBeInTheDocument();
+  });
+
+  test("the menu button calls back so the drawer can open", async () => {
+    const onMenuClick = vi.fn();
+    renderWithProviders(<Header onMenuClick={onMenuClick} />);
+
+    await userEvent.click(screen.getByLabelText("Open navigation"));
+    expect(onMenuClick).toHaveBeenCalledTimes(1);
   });
 });
