@@ -1,36 +1,32 @@
-class V1::SessionsController < ApplicationController
-  before_action :authenticate, only: :destroy
-  def create
-    user = User.where(email: params[:email]).first
+module V1
+  class SessionsController < ApplicationController
+    before_action :authenticate_user!, only: :destroy
 
-    if user.present? && user.valid_password?(params[:password])
-      render json: user.to_json(only: %i[id email authentication_token]),
-             status: 201
-    else
-      render json: { message: 'Invalid Email or Password' }
+    # POST /v1/sessions
+    # Returns the plaintext token exactly once; only its digest is stored.
+    def create
+      user = User.find_by(email: params[:email].to_s.downcase)
+
+      if user&.valid_password?(params[:password])
+        token = user.issue_authentication_token!
+        render json: {
+          id: user.id,
+          email: user.email,
+          name: user.name,
+          username: user.username,
+          authentication_token: token
+        }, status: :created
+      else
+        # Previously returned 200 OK with a message, so the client could not
+        # distinguish a failed login from a successful one by status alone.
+        render json: { error: 'Invalid email or password' }, status: :unauthorized
+      end
     end
-  end
 
-  def destroy
-    user = User.find(params[:id])
-    token = request.headers['token'].delete_suffix('nil')
-
-    if user.present? && user.authentication_token == token
-      user.authentication_token = nil
-      user.save
-      render json: { message: 'successfully logout' }
-    else
-      render json: { message: 'Invalid Session' }
-    end
-  end
-
-  private
-
-  def authenticate
-    token = request.headers['token'].delete_suffix('nil')
-    user = User.where(authentication_token: token)
-    if user.empty?
-      render json: 'unauthorized', status: :unauthorized
+    # DELETE /v1/sessions
+    def destroy
+      current_user.revoke_authentication_token!
+      head :no_content
     end
   end
 end

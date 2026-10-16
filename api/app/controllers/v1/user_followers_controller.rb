@@ -1,21 +1,12 @@
-class V1::UserFollowersController < ApplicationController
-  before_action :authenticate
-  def show
-    user_followers = UserFollowing.where(following_user_id: params[:id])
-    user_ids = []
-    user_followers.each { |u_f| user_ids << u_f.user_id }
-    users = []
-    user_ids.each { |u_i| users << User.find(u_i) }
-    render json: users, status: :ok
-  end
+module V1
+  class UserFollowersController < ApplicationController
+    before_action :authenticate_user
 
-  private
-
-  def authenticate
-    token = request.headers['token'].delete_suffix('nil')
-    user = User.where(authentication_token: token)
-    if user.empty?
-      render json: 'unauthorized', status: :unauthorized
+    # GET /v1/users/:user_id/followers
+    def show
+      user = User.find(params[:user_id])
+      users = paginate(user.followers.order(:id))
+      render json: users, meta: pagination_meta(users), scope: current_user, status: :ok
     end
   end
 end

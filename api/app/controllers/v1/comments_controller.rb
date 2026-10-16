@@ -1,52 +1,47 @@
-class V1::CommentsController < ApplicationController 
-  before_action :authenticate, except: :index
-  def index
-    comments = Comment.where(post_id: params[:post_id])
+module V1
+  class CommentsController < ApplicationController
+    before_action :authenticate_user!, except: :index
 
-    render json: comments, status: :ok
-  end
-
-  def create
-    comment = Comment.new(comment_param)
-
-    if comment.save
-      render json: comment, message: 'Comment Created', status: 201
-    else
-      render json: { error: comment.errors.messages }, status: :created
+    # GET /v1/posts/:post_id/comments
+    def index
+      post = Post.find(params[:post_id])
+      comments = paginate(post.comments.newest_first.includes(:user))
+      render json: comments, meta: pagination_meta(comments), status: :ok
     end
-  end
 
-  def update
-    comment = Comment.find(params[:id])
+    # POST /v1/comments
+    def create
+      comment = current_user.comments.build(comment_params)
 
-    if comment.update(comment_param)
-      render json: comment, message: 'Comment Updated', status: :ok
-    else
-      render json: { error: comment.errors.messages }, status: 422
+      if comment.save
+        render json: comment, status: :created
+      else
+        # The failure branch used to render status: :created.
+        unprocessable(comment)
+      end
     end
-  end
 
-  def destroy
-    comment = Comment.find(params[:id])
+    # PATCH/PUT /v1/comments/:id
+    def update
+      comment = current_user.comments.find(params[:id])
 
-    if comment.destroy
-      render json: comment, message: 'Comment Deleted', status: :ok
-    else
-      render json: { error: comment.errors.messages }, status: 422
+      if comment.update(comment_params.slice(:content))
+        render json: comment, status: :ok
+      else
+        unprocessable(comment)
+      end
     end
-  end
 
-  private
+    # DELETE /v1/comments/:id
+    def destroy
+      current_user.comments.find(params[:id]).destroy!
+      head :no_content
+    end
 
-  def comment_param
-    params.require(:comment).permit(:content, :post_id, :user_id)
-  end
+    private
 
-  def authenticate
-    token = request.headers['token'].delete_suffix('nil')
-    user = User.where(authentication_token: token)
-    if user.empty? || user.ids.first != params[:user_id]
-      render json: 'unauthorized', status: :unauthorized
+    def comment_params
+      params.require(:comment).permit(:content, :post_id)
     end
   end
 end

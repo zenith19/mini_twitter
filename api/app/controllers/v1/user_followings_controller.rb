@@ -1,53 +1,34 @@
-class V1::UserFollowingsController < ApplicationController 
-  before_action :authenticate
-  def show
-    user_followings = UserFollowing.where(user_id: params[:id])
-    user_ids = []
-    user_followings.each { |u_f| user_ids << u_f.following_user_id }
-    users = []
-    user_ids.each { |u_i| users << User.find(u_i) }
-    render json: users, status: 200
-  end
+module V1
+  class UserFollowingsController < ApplicationController
+    before_action :authenticate_user!, except: :show
 
-  def create
-    if UserFollowing.where(user_id: params[:user_id]).where(
-         following_user_id: params[:following_user_id]
-       ).present?
-      render json: { message: 'Already Following' }, status: 422
-    else
-      user_following = UserFollowing.new(following_param)
-      if user_following.save
-        render json: user_following, message: 'Success', status: 200
+    # GET /v1/users/:user_id/followings
+    # Previously collected ids in a Ruby loop and called User.find on each
+    # one; now a single query through the association.
+    def show
+      user = User.find(params[:user_id])
+      users = paginate(user.followings.order(:id))
+      render json: users, meta: pagination_meta(users), scope: current_user, status: :ok
+    end
+
+    # POST /v1/user_followings
+    def create
+      follow = current_user.active_follows.build(following_user_id: params[:following_user_id])
+
+      if follow.save
+        render json: follow, status: :created
       else
-        render json: { error: user_following.errors.messages }, status: 422
+        unprocessable(follow)
       end
     end
-  end
 
-  def destroy
-    user_following =
-      UserFollowing.where(user_id: params[:user_id]).where(
-        following_user_id: params[:following_user_id]
-      )
-
-    if user_following.destroy
-      render json: { message: 'Success' }, status: :ok
-    else
-      render json: { error: user_following.errors.messages }, status: 422
-    end
-  end
-
-  private
-
-  def following_param
-    params.require(:user_following).permit(:user_id, :following_user_id)
-  end
-
-  def authenticate
-    token = request.headers['token'].delete_suffix('nil')
-    user = User.where(authentication_token: token)
-    if user.empty?
-      render json: 'unauthorized', status: :unauthorized
+    # DELETE /v1/user_followings/:following_user_id
+    # The old version called .destroy on an ActiveRecord::Relation, which
+    # raises rather than deleting anything.
+    def destroy
+      follow = current_user.active_follows.find_by!(following_user_id: params[:id])
+      follow.destroy!
+      head :no_content
     end
   end
 end
