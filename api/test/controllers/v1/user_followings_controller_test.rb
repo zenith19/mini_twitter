@@ -9,6 +9,26 @@ module V1
       assert_equal ['bob'], json_body['users'].map { |u| u['username'] }
     end
 
+    test 'show reports the follow state so buttons render correctly' do
+      # `before_action :authenticate_user!, except: :show` left show with no
+      # filter at all, so current_user was nil, the serializer dropped the
+      # `following` flag, and every row on the Following page rendered as
+      # "Follow" even though by definition you follow all of them.
+      get v1_user_followings_path(users(:alice)), headers: auth_headers_for(users(:alice))
+
+      assert_response :ok
+      bob = json_body['users'].find { |u| u['username'] == 'bob' }
+      assert_equal true, bob['following'],
+                   'everyone in your own followings list must be marked as followed'
+    end
+
+    test 'show omits the follow state for anonymous callers' do
+      get v1_user_followings_path(users(:alice))
+
+      assert_response :ok
+      assert_not json_body['users'].first.key?('following')
+    end
+
     test 'following requires authentication' do
       assert_no_difference 'UserFollowing.count' do
         post v1_follows_path, params: { following_user_id: users(:carol).id }, as: :json

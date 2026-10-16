@@ -111,7 +111,7 @@ Collections accept `?page=` and `?per_page=` (default 25, max 100).
 
 ```bash
 make test                                   # both suites
-docker compose run --rm -e RAILS_ENV=test api bin/rails test   # 69 runs
+docker compose run --rm -e RAILS_ENV=test api bin/rails test   # 72 runs
 cd web && npm test                                              # 24 tests
 ```
 

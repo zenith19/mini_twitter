@@ -1,6 +1,10 @@
 module V1
   class UserFollowingsController < ApplicationController
     before_action :authenticate_user!, except: :show
+    # `except: :show` alone left show with no filter at all, so current_user
+    # was nil and the serializer omitted the `following` flag. Every row on
+    # the Following page then rendered as "Follow" rather than "Following".
+    before_action :authenticate_user, only: :show
 
     # GET /v1/users/:user_id/followings
     # Previously collected ids in a Ruby loop and called User.find on each
