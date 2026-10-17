@@ -119,6 +119,11 @@ curl -s localhost:3001/v1/posts -H "Authorization: Bearer $TOKEN" | jq '.posts[0
 
 Collections accept `?page=` and `?per_page=` (default 25, max 100).
 
+## Deploying
+
+Free on Neon (Postgres) + Render (API) + Cloudflare Pages (client), none of which expire.
+Step-by-step in [DEPLOY.md](DEPLOY.md); `render.yaml` declares the API service as a Blueprint.
+
 ## Tests
 
 ```bash

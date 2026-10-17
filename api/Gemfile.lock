@@ -301,7 +301,7 @@ DEPENDENCIES
   debug
   devise (~> 4.9)
   dotenv-rails
-  faker
+  faker (~> 3.8)
   kaminari (~> 1.2)
   listen (~> 3.8)
   minitest (~> 5.25)

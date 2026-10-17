@@ -1,0 +1,28 @@
+# Render Blueprint for the API. The React client is hosted separately as a
+# static site (see DEPLOY.md); only the Rails service needs a server.
+services:
+  - type: web
+    name: mini-twitter-api
+    runtime: ruby
+    plan: free
+    rootDir: api
+    buildCommand: ./bin/render-build.sh
+    startCommand: bundle exec puma -C config/puma.rb
+    healthCheckPath: /up
+    envVars:
+      - key: RAILS_ENV
+        value: production
+      - key: RAILS_LOG_LEVEL
+        value: info
+      - key: BUNDLE_WITHOUT
+        value: development:test
+      # Generated once by Render and kept thereafter.
+      - key: SECRET_KEY_BASE
+        generateValue: true
+      # Set by hand in the dashboard: the Neon connection string.
+      - key: DATABASE_URL
+        sync: false
+      # Set by hand: the deployed client's origin, e.g.
+      # https://mini-twitter.pages.dev
+      - key: CORS_ORIGINS
+        sync: false
