@@ -56,4 +56,13 @@ class User < ApplicationRecord
   def following?(other_user)
     followings.exists?(id: other_user.id)
   end
+
+  # The home timeline: posts by the people this user follows, plus their own.
+  #
+  # A subquery rather than `followings.ids` so the follow set never has to be
+  # loaded into Ruby, and the whole thing stays one round trip.
+  def timeline_posts
+    followed = UserFollowing.where(user_id: id).select(:following_user_id)
+    Post.where(user_id: followed).or(Post.where(user_id: id))
+  end
 end

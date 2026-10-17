@@ -19,7 +19,7 @@ architecture, the endpoint table and the auth design.
 ```bash
 bin/setup                       # install, create .env, prepare the database
 bin/rails server -p 3001
-bin/rails test                  # 72 runs
+bin/rails test                  # 79 runs
 bin/rails db:seed               # 8 users with posts, comments and follows
 ```
 

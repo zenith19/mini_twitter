@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { Link as RouterLink, useLocation, useNavigate } from "react-router-dom";
-import { Box, Button, Link, Stack, TextField, Typography } from "@mui/material";
+import { Alert, Box, Button, Link, Stack, TextField, Typography } from "@mui/material";
 import { useAuth } from "../auth/AuthContext";
 import { errorMessage } from "../api/client";
 import { ErrorMessage } from "../components/Feedback";
@@ -35,6 +35,12 @@ export default function Login() {
       <Typography variant="h5" fontWeight={800} gutterBottom>
         Log in
       </Typography>
+
+      {location.state?.expired && !formError && (
+        <Alert severity="info" sx={{ my: 2 }}>
+          Your session ended. Please log in again.
+        </Alert>
+      )}
 
       <ErrorMessage>{formError}</ErrorMessage>
 

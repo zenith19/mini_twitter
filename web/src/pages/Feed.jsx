@@ -1,6 +1,8 @@
 import { useState } from "react";
 import { Link as RouterLink } from "react-router-dom";
-import { Box, Button, Divider, Paper, Stack, TextField, Typography } from "@mui/material";
+import {
+  Box, Button, Divider, Paper, Stack, Tab, Tabs, TextField, Typography,
+} from "@mui/material";
 import { useForm } from "react-hook-form";
 import useFetch from "../api/useFetch";
 import client, { errorMessage } from "../api/client";
@@ -61,13 +63,27 @@ function Composer({ onCreated }) {
 
 export default function Feed() {
   const { isSignedIn } = useAuth();
+  const [tab, setTab] = useState("following");
   const [page, setPage] = useState(1);
-  const { data, error, loading, reload } = useFetch(`/v1/posts?page=${page}`);
+
+  // Signed-out visitors only have the public list. Signed-in users default to
+  // their own timeline — until this existed, following somebody changed a
+  // button label and nothing else.
+  const showingTimeline = isSignedIn && tab === "following";
+  const path = showingTimeline ? `/v1/timeline?page=${page}` : `/v1/posts?page=${page}`;
+  const { data, error, loading, reload } = useFetch(path);
+
+  const changeTab = (_event, value) => {
+    setTab(value);
+    setPage(1);
+  };
+
+  const refresh = () => (page === 1 ? reload() : setPage(1));
 
   return (
     <Box>
       {isSignedIn ? (
-        <Composer onCreated={() => (page === 1 ? reload() : setPage(1))} />
+        <Composer onCreated={refresh} />
       ) : (
         <Paper variant="outlined" sx={{ p: 2, mb: 2, borderRadius: 2 }}>
           <Typography variant="body2">
@@ -76,12 +92,28 @@ export default function Feed() {
         </Paper>
       )}
 
+      {isSignedIn && (
+        <Tabs value={tab} onChange={changeTab} sx={{ mb: 1 }}>
+          <Tab value="following" label="Following" sx={{ textTransform: "none" }} />
+          <Tab value="everyone" label="Everyone" sx={{ textTransform: "none" }} />
+        </Tabs>
+      )}
+
       <ErrorMessage>{error}</ErrorMessage>
       {loading && <Loading />}
 
-      {data?.posts?.length === 0 && <Empty>No posts yet.</Empty>}
+      {data?.posts?.length === 0 &&
+        (showingTimeline ? (
+          <Empty>
+            Your timeline is empty. Find people to follow on the{" "}
+            <RouterLink to="/users">People</RouterLink> page, or switch to Everyone.
+          </Empty>
+        ) : (
+          <Empty>No posts yet.</Empty>
+        ))}
+
       {data?.posts?.map((post) => (
-        <PostCard key={post.id} post={post} />
+        <PostCard key={post.id} post={post} onChanged={refresh} />
       ))}
 
       {data?.meta && data.meta.total_pages > 1 && (

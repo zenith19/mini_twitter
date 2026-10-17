@@ -1,5 +1,6 @@
-import { createContext, useCallback, useContext, useMemo, useState } from "react";
-import client, { setAuthToken } from "../api/client";
+import { createContext, useCallback, useContext, useEffect, useMemo, useState } from "react";
+import { useNavigate } from "react-router-dom";
+import client, { setAuthToken, setUnauthorizedHandler } from "../api/client";
 
 const STORAGE_KEY = "loginData";
 
@@ -18,6 +19,7 @@ function readStoredUser() {
 }
 
 export function AuthProvider({ children }) {
+  const navigate = useNavigate();
   const [user, setUser] = useState(() => {
     const stored = readStoredUser();
     if (stored?.authentication_token) setAuthToken(stored.authentication_token);
@@ -40,16 +42,32 @@ export function AuthProvider({ children }) {
     return data;
   }, []);
 
+  // Drops local session state without calling the API. Used when the server
+  // has already told us the token is no longer valid.
+  const clearSession = useCallback(() => {
+    setAuthToken(null);
+    window.localStorage.removeItem(STORAGE_KEY);
+    setUser(null);
+  }, []);
+
   const logout = useCallback(async () => {
     try {
       await client.delete("/v1/sessions");
     } catch {
       // A failed revoke should not strand the user in a logged-in UI.
     }
-    setAuthToken(null);
-    window.localStorage.removeItem(STORAGE_KEY);
-    setUser(null);
-  }, []);
+    clearSession();
+  }, [clearSession]);
+
+  // Without this, a revoked token left the UI looking signed in: every request
+  // returned 401, an error appeared, and the app still showed the user's name.
+  useEffect(() => {
+    setUnauthorizedHandler(() => {
+      clearSession();
+      navigate("/login", { replace: true, state: { expired: true } });
+    });
+    return () => setUnauthorizedHandler(null);
+  }, [clearSession, navigate]);
 
   const value = useMemo(
     () => ({ user, isSignedIn: Boolean(user), login, signup, logout }),

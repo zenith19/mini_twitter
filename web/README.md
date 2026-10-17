@@ -19,7 +19,7 @@ architecture and the API it consumes.
 npm install
 npm run dev          # http://localhost:5173
 npm run build        # production bundle
-npm test             # 24 tests (Vitest)
+npm test             # 38 tests (Vitest)
 npm run lint
 ```
 
@@ -35,7 +35,7 @@ Copy [.env.example](.env.example) to `.env` to override it.
 
 | Path | Component |
 |---|---|
-| `/` | Feed, with the composer when signed in |
+| `/` | Feed — Following (your timeline) and Everyone tabs, with the composer when signed in |
 | `/posts/:postId` | Post and its replies |
 | `/users` | People |
 | `/users/:userId` | Profile and that user's posts |

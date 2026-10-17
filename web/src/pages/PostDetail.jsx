@@ -1,11 +1,14 @@
 import { useState } from "react";
-import { useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import { Box, Button, Card, Paper, Stack, TextField, Typography } from "@mui/material";
 import { useForm } from "react-hook-form";
 import useFetch from "../api/useFetch";
 import client, { errorMessage } from "../api/client";
 import { useAuth } from "../auth/AuthContext";
 import Avatar from "../components/Avatar";
+import OwnerMenu from "../components/OwnerMenu";
+import ConfirmDialog from "../components/ConfirmDialog";
+import PostEditDialog from "../components/PostEditDialog";
 import CommentCard from "../components/CommentCard";
 import { Empty, ErrorMessage, Loading } from "../components/Feedback";
 import { relativeTime } from "../lib/time";
@@ -56,7 +59,11 @@ function CommentComposer({ postId, onCreated }) {
 
 export default function PostDetail() {
   const { postId } = useParams();
-  const { isSignedIn } = useAuth();
+  const navigate = useNavigate();
+  const { isSignedIn, user } = useAuth();
+  const [confirming, setConfirming] = useState(false);
+  const [editing, setEditing] = useState(false);
+  const [busy, setBusy] = useState(false);
   const post = useFetch(`/v1/posts/${postId}`);
   const comments = useFetch(`/v1/posts/${postId}/comments`);
 
@@ -69,9 +76,9 @@ export default function PostDetail() {
   return (
     <Box>
       <Card variant="outlined" sx={{ p: 2, borderRadius: 2 }}>
-        <Stack direction="row" spacing={1.5}>
+        <Stack direction="row" spacing={1.5} alignItems="flex-start">
           <Avatar user={item.user} />
-          <Box>
+          <Box sx={{ flex: 1 }}>
             <Typography variant="subtitle2" fontWeight={700}>
               {item.user?.name}
             </Typography>
@@ -79,6 +86,9 @@ export default function PostDetail() {
               @{item.user?.username} · {relativeTime(item.created_at)}
             </Typography>
           </Box>
+          {user?.id === item.user?.id && (
+            <OwnerMenu onEdit={() => setEditing(true)} onDelete={() => setConfirming(true)} />
+          )}
         </Stack>
 
         <Typography variant="h6" fontWeight={700} sx={{ mt: 2 }}>
@@ -86,6 +96,33 @@ export default function PostDetail() {
         </Typography>
         <Typography sx={{ mt: 1, whiteSpace: "pre-wrap" }}>{item.content}</Typography>
       </Card>
+
+      <ConfirmDialog
+        open={confirming}
+        busy={busy}
+        title="Delete this post?"
+        body="This also removes its replies. This cannot be undone."
+        onConfirm={async () => {
+          setBusy(true);
+          try {
+            await client.delete(`/v1/posts/${item.id}`);
+            navigate("/", { replace: true });
+          } finally {
+            setBusy(false);
+            setConfirming(false);
+          }
+        }}
+        onClose={() => setConfirming(false)}
+      />
+
+      {editing && (
+        <PostEditDialog
+          post={item}
+          open={editing}
+          onClose={() => setEditing(false)}
+          onSaved={post.reload}
+        />
+      )}
 
       <Paper variant="outlined" sx={{ p: 2, mt: 2, borderRadius: 2 }}>
         <Typography variant="subtitle2" fontWeight={700}>
@@ -96,7 +133,7 @@ export default function PostDetail() {
         {comments.loading && <Loading />}
         {comments.data?.comments?.length === 0 && <Empty>No replies yet.</Empty>}
         {comments.data?.comments?.map((comment) => (
-          <CommentCard key={comment.id} comment={comment} />
+          <CommentCard key={comment.id} comment={comment} onChanged={comments.reload} />
         ))}
 
         {isSignedIn ? (

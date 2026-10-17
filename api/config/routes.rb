@@ -10,6 +10,9 @@ Rails.application.routes.draw do
       resource  :followers,  only: %i[show], controller: 'user_followers'
     end
 
+    # The home feed: posts from the people you follow, plus your own.
+    resource :timeline, only: %i[show], controller: 'timeline'
+
     resources :posts, only: %i[index show create update destroy] do
       resources :comments, only: %i[index]
     end

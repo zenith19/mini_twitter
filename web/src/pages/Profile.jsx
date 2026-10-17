@@ -56,7 +56,7 @@ export default function Profile() {
       {posts.loading && <Loading />}
       {posts.data?.posts?.length === 0 && <Empty>No posts yet.</Empty>}
       {posts.data?.posts?.map((post) => (
-        <PostCard key={post.id} post={post} />
+        <PostCard key={post.id} post={post} onChanged={posts.reload} />
       ))}
     </Box>
   );

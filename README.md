@@ -95,7 +95,8 @@ All responses are JSON, rooted on the resource name, with a `meta` block on coll
 | `GET` | `/v1/users/:id/posts` | | |
 | `GET` | `/v1/users/:id/followings` | ○ | |
 | `GET` | `/v1/users/:id/followers` | ○ | |
-| `GET` | `/v1/posts` | | Paginated, newest first |
+| `GET` | `/v1/timeline` | ● | Home feed: posts by people you follow, plus your own |
+| `GET` | `/v1/posts` | | The public "everything" list, newest first |
 | `GET` | `/v1/posts/:id` | | |
 | `POST` | `/v1/posts` | ● | Author taken from the token |
 | `PATCH` | `/v1/posts/:id` | ● | Owner only |
@@ -122,14 +123,15 @@ Collections accept `?page=` and `?per_page=` (default 25, max 100).
 
 ```bash
 make test                                   # both suites
-docker compose run --rm -e RAILS_ENV=test api bin/rails test   # 72 runs
-cd web && npm test                                              # 24 tests
+docker compose run --rm -e RAILS_ENV=test api bin/rails test   # 79 runs
+cd web && npm test                                              # 38 tests
 ```
 
 The backend suite covers the auth concern (missing / malformed / unknown / revoked tokens),
 cross-user ownership, the follow cycle including duplicate and self-follows, and email privacy.
 The frontend suite covers the login flow, the auth-dependent chrome, small-screen navigation, the
-follow button and the fetch hook.
+follow button, the fetch hook, the feed's two tabs, session expiry, and the owner-only edit and
+delete controls.
 
 ## Security notes
 
@@ -145,7 +147,8 @@ follow button and the fetch hook.
 - `react-router` v6 carries two moderate open-redirect advisories fixed only in v7. This app passes
   no user-controlled input to `<Link>` or `useNavigate`, so it is not reachable here, but the v7
   upgrade is worth doing.
-- The token never expires on its own; only login rotation and logout revoke it.
+- The token never expires on its own; only login rotation and logout revoke it. The client does
+  detect a rejected token and sign out, but a time-to-live on the server would be better.
 - Pagination is offset-based, which drifts on a fast-moving feed. Cursor pagination would be the
   fix if the feed ever got busy.
 
