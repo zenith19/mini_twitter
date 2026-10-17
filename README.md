@@ -1,5 +1,7 @@
 # mini twitter
 
+[![CI](https://github.com/zenith19/mini_twitter/actions/workflows/ci.yml/badge.svg)](https://github.com/zenith19/mini_twitter/actions/workflows/ci.yml)
+
 A small Twitter-style social app: a **Rails 7.1 JSON API** and a **React 18 single-page client**.
 Users sign up, post, reply, and follow each other.
 
